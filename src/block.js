@@ -45,11 +45,11 @@ class Block {
             // Comparing if the hashes changed
             if(Hash == NewHash){
                 console.log("The block has been successfully validated")
-                resolve();
+                resolve(true);
             }
             else{
                 console.log("The block has failed validation")
-                reject();
+                resolve(false);
             }
 
         });
@@ -70,11 +70,13 @@ class Block {
         const Decoded = JSON.parse(hex2ascii(body));
 
         return new Promise((resolve, reject) => {
+            // To account for the genisis block to prevemt errors
             if(self.previousBlockHash != null){
                 resolve(Decoded)}
             else{
                 resolve(null)
             }
+            // Logs the decoded data into console
             console.log("Decoded Data:", Decoded)
         })
     }
