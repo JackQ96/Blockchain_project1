@@ -117,6 +117,22 @@ class Blockchain {
     submitStar(address, message, signature, star) {
         let self = this;
         return new Promise(async (resolve, reject) => {
+            const time = parseInt(message.split(':')[1]);
+            let currentTime = parseInt(new Date().getTime().toString().slice(0, -3));
+
+            if (currentTime - time < 300) {
+                const verify = bitcoinMessage.verify(message, address, signature)
+                if (verify) {
+                    const block = new BlockClass.Block({owner: address, star: star});
+                    resolve(await self._addBlock(block));
+                }
+                else {
+                    reject(new Error('Message has not been verified'))
+                }
+            }
+            else {
+                reject(new Error('Block has exceeded the 5 minute limit'))
+            }
             
         });
     }
@@ -130,6 +146,13 @@ class Blockchain {
     getBlockByHash(hash) {
         let self = this;
         return new Promise((resolve, reject) => {
+            let search = self.chain.find((block) => block.hash === hash)[0];
+            if (search) {
+                resolve(block)
+            }
+            else{
+                reject('Block cannot be found');
+            }
            
         });
     }
@@ -143,10 +166,11 @@ class Blockchain {
         let self = this;
         return new Promise((resolve, reject) => {
             let block = self.chain.filter(p => p.height === height)[0];
-            if(block){
+            if (block) {
                 resolve(block);
-            } else {
-                resolve(null);
+            } 
+            else {
+                reject('Failed to find block by height');
             }
         });
     }
@@ -180,6 +204,15 @@ class Blockchain {
         let self = this;
         let errorLog = [];
         return new Promise(async (resolve, reject) => {
+            for (const data of self.chain) {
+                if (data.validate() === false) {
+                    errorLog.push(data)
+                }
+                if (data.previousBlockHash != self.chain[data.height - 1].hash) {
+                    errorLog.push(data)
+                }
+            }
+            resolve(errorLog)
             
         });
     }
