@@ -65,21 +65,17 @@ class Blockchain {
         let self = this;
         return new Promise(async (resolve, reject) => {
             const newBlock = block;
-            if (errors.length === 0) {
                 if (self.chain.length > 0) {
                     newBlock.previousBlockHash = self.chain[self.chain.length - 1].hash;
                 }
                 newBlock.height = self.chain.length;
-                self.height = self.chain.length;
                 newBlock.hash = SHA256(JSON.stringify(newBlock)).toString();
                 newBlock.time = new Date().getTime().toString().slice(0.-3);
                 
                 self.chain.push(newBlock);
+                self.height = self.chain.length;
                 resolve(newBlock);
-            }
-            else{
-                reject("Failed to add Block")
-            }
+                console.log(newBlock);
         });
     }
 
@@ -123,7 +119,7 @@ class Blockchain {
             if (currentTime - time < 300) {
                 const verify = bitcoinMessage.verify(message, address, signature)
                 if (verify) {
-                    const block = new BlockClass.Block({owner: address, star: star});
+                    const block = new BlockClass.Block({"owner": address, "star": star});
                     resolve(await self._addBlock(block));
                 }
                 else {
