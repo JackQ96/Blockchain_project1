@@ -64,7 +64,9 @@ class Blockchain {
     _addBlock(block) {
         let self = this;
         return new Promise(async (resolve, reject) => {
-            const newBlock = block;
+            let errors = await self.validateChain();
+            if(errors.length === 0){
+                const newBlock = block;
                 if (self.chain.length > 0) {
                     newBlock.previousBlockHash = self.chain[self.chain.length - 1].hash;
                 }
@@ -76,6 +78,10 @@ class Blockchain {
                 self.height = self.chain.length;
                 resolve(newBlock);
                 console.log(newBlock);
+            }
+            else{
+                reject("Block not valid")
+            }
         });
     }
 
