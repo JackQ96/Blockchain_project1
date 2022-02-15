@@ -210,8 +210,11 @@ class Blockchain {
                 if (data.validate() === false) {
                     errorLog.push(data)
                 }
-                if (data.previousBlockHash != self.chain[data.height - 1].hash) {
+                if(data.height > 0) {
+                    if (data.previousBlockHash != self.chain[data.height - 1].hash) {
                     errorLog.push(data)
+                    console.log('error!')
+                    }
                 }
             }
             resolve(errorLog)
