@@ -46,12 +46,10 @@ class Block {
 
             // Comparing if the hashes changed
             if(currHash === NewHash){
-                console.log("The block has been successfully validated")
-                resolve('Valid');
+                resolve('Block Valid');
             }
             else{
-                console.log("The block has failed validation")
-                reject('Invalid');
+                reject('Block Invalid');
             }
 
         });
