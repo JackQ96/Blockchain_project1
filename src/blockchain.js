@@ -95,7 +95,7 @@ class Blockchain {
      */
     requestMessageOwnershipVerification(address) {
         return new Promise((resolve) => {
-            resolve(`${address}:${new Date().getTime().toString().slice(0,-3)}: starRegistry`);
+            resolve(`${address}:${new Date().getTime().toString().slice(0,-3)}:starRegistry`);
         });
     }
 
@@ -148,12 +148,12 @@ class Blockchain {
     getBlockByHash(hash) {
         let self = this;
         return new Promise((resolve, reject) => {
-            let search = self.chain.find((block) => block.hash === hash)[0];
+            let search = self.chain.filter(block => block.hash === hash)[0];
             if (search) {
-                resolve(block)
+                resolve(search)
             }
             else{
-                reject('Block cannot be found');
+                resolve(null);
             }
            
         });
@@ -172,7 +172,7 @@ class Blockchain {
                 resolve(block);
             } 
             else {
-                reject('Failed to find block by height');
+                resolve(null);
             }
         });
     }
@@ -187,11 +187,14 @@ class Blockchain {
         let self = this;
         let stars = [];
         return new Promise((resolve, reject) => {
-            self.chain.forEach(block => {
+            self.chain.forEach((block) => {
                 let chainData = block.getBData();
                 if (chainData) {
-                    stars.push(chainData) }
-            })
+                    if (chainData.owner === address) {
+                        stars.push(chainData)
+                        }
+                    }
+            });
             resolve(stars);
         });
     }
@@ -213,7 +216,6 @@ class Blockchain {
                 if(data.height > 0) {
                     if (data.previousBlockHash != self.chain[data.height - 1].hash) {
                     errorLog.push(data)
-                    console.log('error!')
                     }
                 }
             }

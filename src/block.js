@@ -38,18 +38,20 @@ class Block {
     validate() {
         let self = this;
         return new Promise((resolve, reject) => {
-            // Save in auxiliary variable the current block hash
-            let Hash = self.hash;                    
-            // Recalculate the hash of the Block
+            let currHash = self.hash;
+            self.hash = null;
             let NewHash = SHA256(JSON.stringify(self)).toString();
+
+            self.hash = currHash;
+
             // Comparing if the hashes changed
-            if(Hash == NewHash){
+            if(currHash === NewHash){
                 console.log("The block has been successfully validated")
-                resolve(true);
+                resolve('Valid');
             }
             else{
                 console.log("The block has failed validation")
-                resolve(false);
+                reject('Invalid');
             }
 
         });
