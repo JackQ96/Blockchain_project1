@@ -71,8 +71,8 @@ class Blockchain {
                     newBlock.previousBlockHash = self.chain[self.chain.length - 1].hash;
                 }
                 newBlock.height = self.chain.length;
-                newBlock.hash = SHA256(JSON.stringify(newBlock)).toString();
                 newBlock.time = new Date().getTime().toString().slice(0.-3);
+                newBlock.hash = SHA256(JSON.stringify(newBlock)).toString();
                 
                 self.chain.push(newBlock);
                 self.height = self.chain.length;
