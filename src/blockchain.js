@@ -187,13 +187,13 @@ class Blockchain {
         let self = this;
         let stars = [];
         return new Promise((resolve, reject) => {
-            self.chain.forEach((block) => {
-                let chainData = block.getBData();
+            self.chain.forEach(async (block) => {
+                let chainData = await block.getBData();
                 if (chainData) {
                     if (chainData.owner === address) {
                         stars.push(chainData)
-                        }
                     }
+                }
             });
             resolve(stars);
         });
@@ -210,7 +210,7 @@ class Blockchain {
         let errorLog = [];
         return new Promise(async (resolve, reject) => {
             for (const data of self.chain) {
-                if (data.validate() === false) {
+                if (await data.validate() === false) {
                     errorLog.push(data)
                 }
                 if(data.height > 0) {
